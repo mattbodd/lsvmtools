@@ -189,6 +189,7 @@ EFI_STATUS efi_main(EFI_HANDLE imageHandle, EFI_SYSTEM_TABLE *systemTable)
     }
 
     /* Measure the Linux scenario into PCR[11] */
+    /* 
     if (haveTPM && MeasureLinuxScenario(tcg2Protocol, imageHandle) != EFI_SUCCESS)
     {
         LOGE(L"failed to measure Linux scenario");
@@ -198,20 +199,28 @@ EFI_STATUS efi_main(EFI_HANDLE imageHandle, EFI_SYSTEM_TABLE *systemTable)
     if (haveTPM && GetLogLevel() >= DEBUG)
         LogPCRs(tcg2Protocol, imageHandle, L"After PCR11 Values");
 
-    /* Attempt to unseal the keys */
+    // Attempt to unseal the keys
     if (haveTPM && UnsealKeys(imageHandle, tcg2Protocol) != EFI_SUCCESS)
     {
         LOGE(L"failed to unseal keys");
-        /* Will ask for passphrase later */
+        // Will ask for passphrase later
     }
 
-    /* Cap PCR[11] */
+    // Cap PCR[11]
     if (haveTPM && CapPCR(imageHandle, tcg2Protocol, 11) != EFI_SUCCESS)
     {
         LOGE(L"failed to cap PCR[11]");
         goto done;
     }
+    */
 
+   // set globals.bootKeyData to well known passphrase (null terminated)
+   char wellKnownPassphrase[64] = "passphrase\0";
+   // strlen will not include the null terminator - must be accounted for explicitly later
+   UINTN wellKnownPassphraseLen = Strlen(wellKnownPassphrase);
+   Memcpy(globals.bootkeyData, wellKnownPassphrase, wellKnownPassphraseLen + 1);
+   globals.bootkeySize = wellKnownPassphraseLen;
+   
     PutProgress(L"Checking boot partition");
 
     /* Try to unlock the boot parition with the unsealed bootkey */
