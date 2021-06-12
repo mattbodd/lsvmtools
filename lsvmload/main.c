@@ -215,11 +215,13 @@ EFI_STATUS efi_main(EFI_HANDLE imageHandle, EFI_SYSTEM_TABLE *systemTable)
     */
 
    // set globals.bootKeyData to well known passphrase (null terminated)
-   char wellKnownPassphrase[64] = "passphrase\0";
+   char wellKnownPassphrase[64] = "passphrase";
    // strlen will not include the null terminator - must be accounted for explicitly later
    UINTN wellKnownPassphraseLen = Strlen(wellKnownPassphrase);
    Memcpy(globals.bootkeyData, wellKnownPassphrase, wellKnownPassphraseLen + 1);
    globals.bootkeySize = wellKnownPassphraseLen;
+   Memcpy(globals.rootkeyData, wellKnownPassphrase, wellKnownPassphraseLen + 1);
+   globals.rootkeySize = wellKnownPassphraseLen;
    
     PutProgress(L"Checking boot partition");
 
